@@ -110,6 +110,7 @@ public class Main {
                 .cookies(loginCookies)
                 .get();
         // важный тестовый комментария для GIT
+        // снова проверяем важный коммент для GIT
         //проверяем мы ли это
         Element statusElement = doc2.getElementById("pun-status");
         Element itemElement = statusElement.getElementsByClass("item1").first();

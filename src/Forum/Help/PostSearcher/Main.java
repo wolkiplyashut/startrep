@@ -24,7 +24,7 @@ public class Main {
         String e_date = "2017-06-05";
         String t_date = "2017-10-22";
 
-        String FORUM_URL = "http://hunted.rusff.ru";
+        String FORUM_URL = "http://testunicorn.0pk.ru";
         Integer GAME_POST_SIZE = 1000;   // длина поста, который считается игровым!  ТОЖЕ ВАЖНО
         Integer USERS_NAME_PAGE_SIZE = 50; // количество игроков в списке игроков
         Integer PAGE_SEARCH_SIZE = 30; // число постов на странице поиска, 20 на фиаре, 30 - на охоте! надо будет это учесть!
@@ -88,29 +88,44 @@ public class Main {
 
         // ОТНОСИТЕЛЬНО РАБОЧАЯ ВЕРСИЯ
 
+
+
         Connection.Response res = Jsoup
                 .connect(login_url)
-                .userAgent(USER_AGENT)
                 .timeout(5000)
-                .data("req_username", USER_NAME,"req_password", PASSWORD, "login", "%E2%EE%E9%F2%E8", "form_sent", "1", "redirect_url", "")  // это "Войти" в кодировке.
-                .method(Method.POST)
+                .method(Method.GET)
                 .execute();
 
+        // сохраним куки
+        Map<String, String> loginCookies = res.cookies();
+
+        res = Jsoup
+                .connect(login_url+"?action=in")
+                .timeout(5000)
+                .data("req_username", USER_NAME)
+                .data("req_password", PASSWORD)
+                .data("form_sent", "1")
+                .data("redirect_url", "")  // это "Войти" в кодировке.
+                .cookies(loginCookies)
+                .method(Method.POST)
+                .execute();
+        loginCookies = res.cookies();
         //выведем результат
         System.out.println("Успешная авторизация: " + res.statusCode());
 
-        // сохраним куки
-        Map<String, String> loginCookies;
-        loginCookies = res.cookies();
+
 
         //Узнаем сколько у нас страниц с пользователями.
         //сперва придется таки узнать сколько у нас игроков
-        Document doc2 = Jsoup.connect(FORUM_URL)
+        res = Jsoup.connect(FORUM_URL)
                 .userAgent(USER_AGENT)
                 .cookies(loginCookies)
-                .get();
-        // важный тестовый комментария для GIT
-        // снова проверяем важный коммент для GIT
+                .method(Method.GET)
+                .execute();
+
+        loginCookies = res.cookies();
+
+        Document doc2 = Jsoup.parse(res.body());
         //проверяем мы ли это
         Element statusElement = doc2.getElementById("pun-status");
         Element itemElement = statusElement.getElementsByClass("item1").first();

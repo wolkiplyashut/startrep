@@ -151,6 +151,9 @@ public class Main {
                     .cookies(loginCookies)
                     .method(Method.GET)
                     .execute();
+
+            loginCookies = res.cookies();
+
             Document doc3 = Jsoup.parse(res.body());
             Elements h2Elements = doc3.getElementsByAttributeValue("class", "usersname");
             h2Elements.forEach((Element h2Element) -> {
@@ -201,6 +204,9 @@ public class Main {
                             .cookies(loginCookies)
                             .method(Method.GET)
                             .execute();
+
+                    loginCookies = res.cookies();
+
                     Document doc4 = Jsoup.parse(res.body());
 
                     Elements postElements = doc4.getElementsByAttributeValue("class", "post");

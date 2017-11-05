@@ -24,7 +24,7 @@ public class Main {
         String e_date = "2017-06-05";
         String t_date = "2017-10-22";
 
-        String FORUM_URL = "http://testunicorn.0pk.ru";
+        String FORUM_URL = "http://hunted.rusff.ru";
         Integer GAME_POST_SIZE = 1000;   // длина поста, который считается игровым!  ТОЖЕ ВАЖНО
         Integer USERS_NAME_PAGE_SIZE = 50; // количество игроков в списке игроков
         Integer PAGE_SEARCH_SIZE = 30; // число постов на странице поиска, 20 на фиаре, 30 - на охоте! надо будет это учесть!
@@ -34,7 +34,7 @@ public class Main {
 
         String need_forum1 = "flood";
         String need_forum2 = "Личные темы";
-        String need_forum3 = "info";
+        String need_forum3 = "info2";
         String need_forum4 = "info1";
 
 
@@ -146,16 +146,12 @@ public class Main {
         // причем делаем это в цикле дя каждой страницы!
         for (int k = 1; k < stringsNumber + 1 ; k++ ){
 
-            Document doc3 = null;
-            try {
-                doc3 = Jsoup.connect(FORUM_URL + "/userlist.php?show_group=-1&sort_by=last_visit&sort_dir=DESC&username=-&p=" + k)
-                        .userAgent(USER_AGENT)
-                        .cookies(loginCookies)
-                        //.cookies(loginFormResponse.cookies())
-                        .get();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            res = Jsoup.connect(FORUM_URL + "/userlist.php?show_group=-1&sort_by=last_visit&sort_dir=DESC&username=-&p=" + k)
+                    .userAgent(USER_AGENT)
+                    .cookies(loginCookies)
+                    .method(Method.GET)
+                    .execute();
+            Document doc3 = Jsoup.parse(res.body());
             Elements h2Elements = doc3.getElementsByAttributeValue("class", "usersname");
             h2Elements.forEach((Element h2Element) -> {
                 String name = h2Element.child(0).text();
@@ -200,11 +196,13 @@ public class Main {
                 for (number_of_lists = 1; number_of_lists < number_of_post_sheets + 1; number_of_lists++) {
                     String need_url = main_need_url + "&p=" + number_of_lists;
 
-                    Document doc4 = Jsoup.connect(need_url)
+                    res = Jsoup.connect(need_url)
                             .userAgent(USER_AGENT)
                             .cookies(loginCookies)
-                            //.cookies(loginFormResponse.cookies())
-                            .get();
+                            .method(Method.GET)
+                            .execute();
+                    Document doc4 = Jsoup.parse(res.body());
+
                     Elements postElements = doc4.getElementsByAttributeValue("class", "post");
 
                     for (Element postElement : postElements) {

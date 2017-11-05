@@ -35,7 +35,7 @@ public class Main {
         String need_forum1 = "flood";
         String need_forum2 = "Личные темы";
         String need_forum3 = "info";
-
+        String need_forum4 = "info1";
 
 
         System.out.println ("============================================================");
@@ -86,9 +86,7 @@ public class Main {
         // TODO нужна авторизация на всех этапах! а то кругами ходит...
         String login_url = FORUM_URL + "/login.php";
 
-        // ОТНОСИТЕЛЬНО РАБОЧАЯ ВЕРСИЯ
-
-
+        // АВТОРИЗАЦИЯ РАБОЧАЯ
 
         Connection.Response res = Jsoup
                 .connect(login_url)
@@ -105,15 +103,13 @@ public class Main {
                 .data("req_username", USER_NAME)
                 .data("req_password", PASSWORD)
                 .data("form_sent", "1")
-                .data("redirect_url", "")  // это "Войти" в кодировке.
+                .data("redirect_url", "")
                 .cookies(loginCookies)
                 .method(Method.POST)
                 .execute();
         loginCookies = res.cookies();
         //выведем результат
         System.out.println("Успешная авторизация: " + res.statusCode());
-
-
 
         //Узнаем сколько у нас страниц с пользователями.
         //сперва придется таки узнать сколько у нас игроков
@@ -254,7 +250,7 @@ public class Main {
                         }
 
                         if (begin_date.before(post_date) && end_date.after(post_date)) {    // сравним пост по дате - вообще попадать ли ему сюда!
-                            if (post_size > GAME_POST_SIZE && (podforum_name.compareTo(need_forum1) == 0 ||  podforum_name.compareTo(need_forum2) == 0  || podforum_name.compareTo(need_forum3) == 0  )) {
+                            if (post_size > GAME_POST_SIZE && (podforum_name.compareTo(need_forum1) == 0 ||  podforum_name.compareTo(need_forum2) == 0 ||  podforum_name.compareTo(need_forum3) == 0 || podforum_name.compareTo(need_forum4) == 0  )) {
                                 number_of_game_post = number_of_game_post + 1;   //условный размер игрового поста
                             }
                             postList.add(new Post(playerList.get(j).getName(), post_size, string_date, number_of_game_post, podforum_name));  // имя автора можем достать из шапки поста - но зачем оно тут нам?

@@ -196,6 +196,7 @@ public class Main {
                 // количество листов с постами. именно изза этой строчки нам так важна авторизация полностью на форуме с правами админа
                 int number_of_post_sheets = (( rolvo - (rolvo % PAGE_SEARCH_SIZE) )/PAGE_SEARCH_SIZE ) + 1;
 
+                // TODO добавить ограничение по датам - чтобы не ходил по ВСЕМ страницам, ибо если дата уже достигнута - дальше постов не будет.
                 for (number_of_lists = 1; number_of_lists < number_of_post_sheets; number_of_lists++) {
                     String need_url = main_need_url + "&p=" + number_of_lists;
 
@@ -264,14 +265,14 @@ public class Main {
                 }
             //тут мы тестово выводим весь список постов. пока что отключим.
 
-            postList.forEach(System.out::println);
+            //postList.forEach(System.out::println);
 
             // вывод финальных данных
             int psize = postList.size();
-            System.out.println ("------------------------------------------------------------");
-            System.out.println ("Количество постов у игрока " + playerList.get(j).getName() + " = " + psize);
-            System.out.println ("Количество игровых постов у игрока " + playerList.get(j).getName() + " = " + number_of_game_post);
-            System.out.println ("============================================================");
+            //System.out.println ("------------------------------------------------------------");
+            System.out.println ("Количество постов у игрока " + playerList.get(j).getName() + " = " + psize + ". Количество игровых постов = " + number_of_game_post);
+            //System.out.println ("Количество игровых постов у игрока " + playerList.get(j).getName() + " = " + number_of_game_post);
+            //System.out.println ("============================================================");
 
         }
 

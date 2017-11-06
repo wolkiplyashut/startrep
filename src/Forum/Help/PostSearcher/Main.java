@@ -90,6 +90,7 @@ public class Main {
 
         Connection.Response res = Jsoup
                 .connect(login_url)
+                .userAgent(USER_AGENT)
                 .timeout(5000)
                 .method(Method.GET)
                 .execute();
@@ -100,6 +101,7 @@ public class Main {
         res = Jsoup
                 .connect(login_url+"?action=in")
                 .timeout(5000)
+                .userAgent(USER_AGENT)
                 .data("req_username", USER_NAME)
                 .data("req_password", PASSWORD)
                 .data("form_sent", "1")
@@ -107,7 +109,7 @@ public class Main {
                 .cookies(cookies)
                 .method(Method.POST)
                 .execute();
-        cookies = res.cookies();
+        cookies.putAll(res.cookies());
         //выведем результат
         System.out.println("Успешная авторизация: " + res.statusCode());
 
@@ -119,7 +121,7 @@ public class Main {
                 .method(Method.GET)
                 .execute();
 
-        cookies = res.cookies();
+        cookies.putAll(res.cookies());
 
         Document doc2 = Jsoup.parse(res.body());
         //проверяем мы ли это
@@ -168,22 +170,27 @@ public class Main {
             });
         }
 
+
         // Выводим эти данные в консоль
         int size = playerList.size();
         System.out.println("Количество игроков = " + size);
+
+
+
+//        res = Jsoup.connect("http://hunted.rusff.ru/viewforum.php?id=3")
+//                .userAgent(USER_AGENT)
+//                .cookies(cookies)
+//                .method(Method.GET)
+//                .execute();
+
+
 
         // тут призываем процедуру подсчета постов этих юзеров что у нас в списке
         for ( int j = 0; j < size; j++){
             String author_url = playerList.get(j).getUrl();
             Integer number_of_game_post = 0;
 
-            //дремлем
-            try {
-                mainThread.sleep(500 + (int)(1000*Math.random())); // пусть поспит секунду
 
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
             List<Post> postList = new ArrayList<>();
             Integer number_of_lists = 1;
             Boolean enough = false;

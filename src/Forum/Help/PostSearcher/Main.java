@@ -49,7 +49,7 @@ public class Main {
         System.out.println ("Минимальное количество символов в игровом посте = " + GAME_POST_SIZE);
         System.out.println ("============================================================");
 
-        // работа с календарем
+        // работа с календарем TODO убрать в процедуры
 
         String b_year_string = b_date.substring(0,4);
         String b_month_string = b_date.substring(5,7);
@@ -114,7 +114,7 @@ public class Main {
                 .execute();
         cookies.putAll(res.cookies());
         //выведем результат
-        System.out.println("Успешная авторизация: " + res.statusCode());
+        //System.out.println("Успешная авторизация: " + res.statusCode());
 
         //Узнаем сколько у нас страниц с пользователями.
         //сперва придется таки узнать сколько у нас игроков
@@ -140,7 +140,7 @@ public class Main {
         Element liElement = conElement.child(2);
         Element strongElement = liElement.getElementsByTag("strong").first();
         String playerNumber = strongElement.text();
-        System.out.println("Число игроков = " + playerNumber);
+        //System.out.println("Число игроков = " + playerNumber);  дублирование, выдается ниже. обычно совпадает.
         //нашли число игроков, теперь найдем число страниц в списке игроков.
         int playerNumberInt = Integer.parseInt(playerNumber);
         // нашли число страниц с пользователями
@@ -177,6 +177,7 @@ public class Main {
         // Выводим эти данные в консоль
         int size = playerList.size();
         System.out.println("Количество игроков = " + size);
+        System.out.println ("============================================================");
 
         // тут призываем процедуру подсчета постов этих юзеров что у нас в списке
         for ( int j = 0; j < size; j++){

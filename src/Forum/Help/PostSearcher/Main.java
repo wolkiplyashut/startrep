@@ -95,7 +95,7 @@ public class Main {
                 .execute();
 
         // сохраним куки
-        Map<String, String> loginCookies = res.cookies();
+        Map<String, String> cookies = res.cookies();
 
         res = Jsoup
                 .connect(login_url+"?action=in")
@@ -104,10 +104,10 @@ public class Main {
                 .data("req_password", PASSWORD)
                 .data("form_sent", "1")
                 .data("redirect_url", "")
-                .cookies(loginCookies)
+                .cookies(cookies)
                 .method(Method.POST)
                 .execute();
-        loginCookies = res.cookies();
+        cookies = res.cookies();
         //выведем результат
         System.out.println("Успешная авторизация: " + res.statusCode());
 
@@ -115,11 +115,11 @@ public class Main {
         //сперва придется таки узнать сколько у нас игроков
         res = Jsoup.connect(FORUM_URL)
                 .userAgent(USER_AGENT)
-                .cookies(loginCookies)
+                .cookies(cookies)
                 .method(Method.GET)
                 .execute();
 
-        loginCookies = res.cookies();
+        cookies = res.cookies();
 
         Document doc2 = Jsoup.parse(res.body());
         //проверяем мы ли это
@@ -148,11 +148,11 @@ public class Main {
 
             res = Jsoup.connect(FORUM_URL + "/userlist.php?show_group=-1&sort_by=last_visit&sort_dir=DESC&username=-&p=" + k)
                     .userAgent(USER_AGENT)
-                    .cookies(loginCookies)
+                    .cookies(cookies)
                     .method(Method.GET)
                     .execute();
 
-            loginCookies = res.cookies();
+            //cookies = res.cookies();
 
             Document doc3 = Jsoup.parse(res.body());
             Elements h2Elements = doc3.getElementsByAttributeValue("class", "usersname");
@@ -201,11 +201,11 @@ public class Main {
 
                     res = Jsoup.connect(need_url)
                             .userAgent(USER_AGENT)
-                            .cookies(loginCookies)
+                            .cookies(cookies)
                             .method(Method.GET)
                             .execute();
 
-                    loginCookies = res.cookies();
+                    //cookies = res.cookies();
 
                     Document doc4 = Jsoup.parse(res.body());
 

@@ -18,7 +18,8 @@ public class Main {
     public static void main(String[] args) throws IOException, ParseException {
         // объявим список где будем хранить нужные нам данные об игроках
         List<Player> playerList = new ArrayList<>();
-
+        // TODO добавить ввод данных через конфиг
+        // TODO и вывод данных в тхт
         // даты ИСКЛЮЧИТЕЛЬНЫЕ, то есть эти даты не будут обраатываться. Будут только те что между ними.
         String b_date = "2017-10-29";  // НАЧАЛО
         String e_date = "2017-11-06";  // КОНЕЦ

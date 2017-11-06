@@ -32,10 +32,13 @@ public class Main {
         String PASSWORD = "nasa1313";
         String USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36";
 
+        //TODO сделать имена форумов массивом или списком... потому что их количество может быть разное. сравнивать неудобно там ниже...
         String need_forum1 = "au";
         String need_forum2 = "storyline";
         String need_forum3 = "real time";
         String need_forum4 = "flash";
+        String need_forum5 = "abandoned episodes";
+        String need_forum6 = "closed episodes";
 
 
         System.out.println ("============================================================");
@@ -252,7 +255,7 @@ public class Main {
                         }
 
                         if (begin_date.before(post_date) && end_date.after(post_date)) {    // сравним пост по дате - вообще попадать ли ему сюда!
-                            if (post_size > GAME_POST_SIZE && (podforum_name.compareTo(need_forum1) == 0 ||  podforum_name.compareTo(need_forum2) == 0 ||  podforum_name.compareTo(need_forum3) == 0 || podforum_name.compareTo(need_forum4) == 0  )) {
+                            if (post_size > GAME_POST_SIZE && (podforum_name.compareTo(need_forum1) == 0 ||  podforum_name.compareTo(need_forum2) == 0 ||  podforum_name.compareTo(need_forum3) == 0 ||  podforum_name.compareTo(need_forum4) == 0 || podforum_name.compareTo(need_forum5) == 0 || podforum_name.compareTo(need_forum6) == 0 )) {
                                 number_of_game_post = number_of_game_post + 1;   //условный размер игрового поста
                             }
                             postList.add(new Post(playerList.get(j).getName(), post_size, string_date, number_of_game_post, podforum_name));  // имя автора можем достать из шапки поста - но зачем оно тут нам?

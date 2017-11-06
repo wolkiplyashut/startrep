@@ -20,22 +20,22 @@ public class Main {
         List<Player> playerList = new ArrayList<>();
 
         // даты ИСКЛЮЧИТЕЛЬНЫЕ, то есть эти даты не будут обраатываться. Будут только те что между ними.
-        String b_date = "2017-06-02";  // это можно получать от пользователя или вбивать - начало и конец подсчета постов
-        String e_date = "2017-06-05";
-        String t_date = "2017-10-22";
+        String b_date = "2017-10-29";  // НАЧАЛО
+        String e_date = "2017-11-06";  // КОНЕЦ
+        String t_date = "2017-11-06";  // СЕГОДНЯ
 
-        String FORUM_URL = "http://hunted.rusff.ru";
+        String FORUM_URL = "http://wildhunted.rusff.ru";
         Integer GAME_POST_SIZE = 1000;   // длина поста, который считается игровым!  ТОЖЕ ВАЖНО
         Integer USERS_NAME_PAGE_SIZE = 50; // количество игроков в списке игроков
         Integer PAGE_SEARCH_SIZE = 30; // число постов на странице поиска, 20 на фиаре, 30 - на охоте! надо будет это учесть!
-        String USER_NAME = "Arthur";
+        String USER_NAME = "Arthur Grant";
         String PASSWORD = "nasa1313";
         String USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36";
 
-        String need_forum1 = "flood";
-        String need_forum2 = "Личные темы";
-        String need_forum3 = "info2";
-        String need_forum4 = "info1";
+        String need_forum1 = "au";
+        String need_forum2 = "storyline";
+        String need_forum3 = "real time";
+        String need_forum4 = "flash";
 
 
         System.out.println ("============================================================");
@@ -83,7 +83,7 @@ public class Main {
         // добавим контроль над потоком
         Thread mainThread = Thread.currentThread();
 
-        // TODO нужна авторизация на всех этапах! а то кругами ходит...
+        // логинимся и соханяем кукисы впредь
         String login_url = FORUM_URL + "/login.php";
 
         // АВТОРИЗАЦИЯ РАБОЧАЯ
@@ -175,16 +175,6 @@ public class Main {
         int size = playerList.size();
         System.out.println("Количество игроков = " + size);
 
-
-
-//        res = Jsoup.connect("http://hunted.rusff.ru/viewforum.php?id=3")
-//                .userAgent(USER_AGENT)
-//                .cookies(cookies)
-//                .method(Method.GET)
-//                .execute();
-
-
-
         // тут призываем процедуру подсчета постов этих юзеров что у нас в списке
         for ( int j = 0; j < size; j++){
             String author_url = playerList.get(j).getUrl();
@@ -253,6 +243,7 @@ public class Main {
                                 if (index2 != -1){
                                     Calendar post_calendar = new GregorianCalendar(t_year, t_month - 1, t_day);
                                     post_calendar.add(Calendar.DAY_OF_YEAR, -1);
+                                    post_date = post_calendar.getTime();
                                 } else {
                                     Calendar post_calendar = new GregorianCalendar(t_year, t_month - 1, t_day);
                                     post_date = post_calendar.getTime();
@@ -268,8 +259,10 @@ public class Main {
                         }
                     }
                 }
+            //тут мы тестово выводим весь список постов
 
-            postList.forEach(System.out::println);
+            //postList.forEach(System.out::println);
+            // вывод финальных данных
             int psize = postList.size();
             System.out.println ("------------------------------------------------------------");
             System.out.println ("Количество постов у игрока " + playerList.get(j).getName() + " = " + psize);

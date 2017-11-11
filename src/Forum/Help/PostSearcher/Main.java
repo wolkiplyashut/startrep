@@ -6,8 +6,8 @@ import org.jsoup.Connection.Method;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.nodes.FormElement;
 import org.jsoup.select.Elements;
+import sun.util.calendar.BaseCalendar;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -21,9 +21,10 @@ public class Main {
         // TODO добавить ввод данных через конфиг
         // TODO и вывод данных в тхт
         // даты ИСКЛЮЧИТЕЛЬНЫЕ, то есть эти даты не будут обраатываться. Будут только те что между ними.
-        String b_date = "2017-10-29";  // НАЧАЛО
-        String e_date = "2017-11-06";  // КОНЕЦ
-        String t_date = "2017-11-06";  // СЕГОДНЯ
+        String b_date = "2017-10-29 00:00:00";  // НАЧАЛО
+        String e_date = "2017-11-06 00:00:00";  // КОНЕЦ
+        String t_date = "2017-11-11 00:00:00";  // СЕГОДНЯ TODO потом пусть сам вычисляет!
+        String et_date = "2017-11-10 00:00:00";  // ВЧЕРА
 
         String FORUM_URL = "http://wildhunted.rusff.ru";
         Integer GAME_POST_SIZE = 1000;   // длина поста, который считается игровым!  ТОЖЕ ВАЖНО
@@ -52,40 +53,44 @@ public class Main {
 
         // работа с календарем TODO убрать в процедуры
 
-        String b_year_string = b_date.substring(0,4);
+        Calendar b_Calendar = stringToDateFormat(b_date);
+        Date begin_date = b_Calendar.getTime();
+        Calendar e_Calendar = stringToDateFormat(e_date);
+        Date end_date = e_Calendar.getTime();
+        Calendar t_Calendar = stringToDateFormat(t_date);
+        Date today_date = t_Calendar.getTime();
+        Calendar et_Calendar = stringToDateFormat(et_date);
+        Date etoday_date = et_Calendar.getTime();
+
+        /*String b_year_string = b_date.substring(0,4);
         String b_month_string = b_date.substring(5,7);
         String b_day_string = b_date.substring(8);
-
         int b_year = Integer.parseInt(b_year_string);
         int b_month = Integer.parseInt(b_month_string);
         int b_day = Integer.parseInt(b_day_string);
+        Calendar b_calendar = new GregorianCalendar(b_year, b_month-1, b_day);
+        Date begin_date = b_calendar.getTime();*/
 
-        String e_year_string = e_date.substring(0,4);
+        /*String e_year_string = e_date.substring(0,4);
         String e_month_string = e_date.substring(5,7);
         String e_day_string = e_date.substring(8);
-
         int e_year = Integer.parseInt(e_year_string);
         int e_month = Integer.parseInt(e_month_string);
         int e_day = Integer.parseInt(e_day_string);
+        Calendar e_calendar = new GregorianCalendar(e_year, e_month-1, e_day);
+        Date end_date = e_calendar.getTime();*/
 
-        String t_year_string = t_date.substring(0,4);
+        /*String t_year_string = t_date.substring(0,4);
         String t_month_string = t_date.substring(5,7);
         String t_day_string = t_date.substring(8);
-
         int t_year = Integer.parseInt(t_year_string);
         int t_month = Integer.parseInt(t_month_string);
         int t_day = Integer.parseInt(t_day_string);
-
-        Calendar b_calendar = new GregorianCalendar(b_year, b_month-1, b_day);
-        Calendar e_calendar = new GregorianCalendar(e_year, e_month-1, e_day);
         Calendar t_calendar = new GregorianCalendar(t_year, t_month-1, t_day);
+        Date today_date = t_calendar.getTime();*/
 
-        Date begin_date = b_calendar.getTime();
-        Date end_date = e_calendar.getTime();
-        Date today_date = t_calendar.getTime();
-
-        // добавим контроль над потоком
-        Thread mainThread = Thread.currentThread();
+        //добавим контроль над потоком
+        //Thread mainThread = Thread.currentThread();
 
         // логинимся и соханяем кукисы впредь
         String login_url = FORUM_URL + "/login.php";
@@ -228,31 +233,37 @@ public class Main {
                         Date post_date = null;
                         // разберемся с датой и проверки добавим на сегодня-вчера
                         if(string_date.length() == 19) {
-                            String post_year_string = string_date.substring(0, 4);
+                            Integer get_inside = 1;
+                            Calendar post_Calendar = stringToDateFormat(string_date);
+                            post_date = post_Calendar.getTime();
+
+                           /* String post_year_string = string_date.substring(0, 4);
                             String post_month_string = string_date.substring(5, 7);
                             String post_day_string = string_date.substring(8, 10);
-
                             int post_year = Integer.parseInt(post_year_string);
                             int post_month = Integer.parseInt(post_month_string);
                             int post_day = Integer.parseInt(post_day_string);
-
                             Calendar post_calendar = new GregorianCalendar(post_year, post_month - 1, post_day);
-                            post_date = post_calendar.getTime();
+                            post_date = post_calendar.getTime();*/
 
                         } else {
                             int index1 = string_date.indexOf("Сегодня");
                             int index2 = string_date.indexOf("Вчера");
                             if (index1 != -1){
-                                Calendar post_calendar = new GregorianCalendar(t_year, t_month - 1, t_day);
-                                post_date = post_calendar.getTime();
+                                /*Calendar post_calendar = new GregorianCalendar(t_year, t_month - 1, t_day);
+                                post_date = post_calendar.getTime();*/
+                                post_date = today_date;
                             } else {
                                 if (index2 != -1){
-                                    Calendar post_calendar = new GregorianCalendar(t_year, t_month - 1, t_day);
-                                    post_calendar.add(Calendar.DAY_OF_YEAR, -1);
-                                    post_date = post_calendar.getTime();
+                                    /*Calendar post_calendar = new GregorianCalendar(t_year, t_month - 1, t_day);
+                                    post_Calendar.add(Calendar.DAY_OF_YEAR, -1);
+                                    post_date = post_Calendar.getTime();*/
+                                    post_date = etoday_date;
+
                                 } else {
-                                    Calendar post_calendar = new GregorianCalendar(t_year, t_month - 1, t_day);
-                                    post_date = post_calendar.getTime();
+                                    /*Calendar post_calendar = new GregorianCalendar(t_year, t_month - 1, t_day);
+                                    post_date = post_calendar.getTime();*/
+                                    post_date = today_date;
                                 }
                             }
                         }
@@ -266,15 +277,13 @@ public class Main {
                     }
                 }
             //тут мы тестово выводим весь список постов. пока что отключим.
-
             //postList.forEach(System.out::println);
 
             // вывод финальных данных
+            // TODO хорошо бы добавить сортировку по playerList по number_of_game_post
+
             int psize = postList.size();
-            //System.out.println ("------------------------------------------------------------");
-            System.out.println ("Количество постов у игрока " + playerList.get(j).getName() + " = " + psize + ". Количество игровых постов = " + number_of_game_post);
-            //System.out.println ("Количество игровых постов у игрока " + playerList.get(j).getName() + " = " + number_of_game_post);
-            //System.out.println ("============================================================");
+            System.out.println ("Количество постов у игрока * " + playerList.get(j).getName() + " * равно * " + psize + " * Количество игровых постов  равно * " + number_of_game_post);
 
         }
 
@@ -283,15 +292,16 @@ public class Main {
         System.out.println ("============================================================");
     }
 
-    public static void checkElement(String name, Element elem) {
-        if (elem == null) {
-            throw new RuntimeException("Не вышло найти: " + name);
-        }
-    }
+    public static Calendar stringToDateFormat(String stringDate){
 
-    // вот тут попытаемся считать число постов. хотя потом переделаем формат скорее всего
-    public static void getPosts(String player_url) throws IOException {
-
+        String need_year_string = stringDate.substring(0,4);
+        String need_month_string = stringDate.substring(5,7);
+        String need_day_string = stringDate.substring(8,10);
+        int Date_year = Integer.parseInt(need_year_string);
+        int Date_month = Integer.parseInt(need_month_string);
+        int Date_day = Integer.parseInt(need_day_string);
+        Calendar need_calendar = new GregorianCalendar(Date_year, Date_month-1, Date_day);
+        return need_calendar;
     }
 
 }
@@ -343,16 +353,8 @@ class Player {
         return all_post_number;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     @Override

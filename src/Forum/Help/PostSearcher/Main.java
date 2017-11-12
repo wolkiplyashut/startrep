@@ -20,7 +20,8 @@ public class Main {
         // запишем данные об агенте
         String USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36";
 
-        // TODO и вывод данных в тхт
+        //dialog windows
+        JOptionPane.showMessageDialog( null, "Скрипт начал работу...", "Подсчет постов", JOptionPane.DEFAULT_OPTION );
 
         //импорт данных из конфиг.пропертис
         FileInputStream fis;

@@ -7,7 +7,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import sun.util.calendar.BaseCalendar;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -23,8 +22,8 @@ public class Main {
         // даты ИСКЛЮЧИТЕЛЬНЫЕ, то есть эти даты не будут обраатываться. Будут только те что между ними.
         String b_date = "2017-10-29 00:00:00";  // НАЧАЛО
         String e_date = "2017-11-06 00:00:00";  // КОНЕЦ
-        String t_date = "2017-11-11 00:00:00";  // СЕГОДНЯ TODO потом пусть сам вычисляет!
-        String et_date = "2017-11-10 00:00:00";  // ВЧЕРА
+        String t_date = "2017-11-12 00:00:00";  // СЕГОДНЯ TODO потом пусть сам вычисляет!
+        String et_date = "2017-11-11 00:00:00";  // ВЧЕРА
 
         String FORUM_URL = "http://wildhunted.rusff.ru";
         Integer GAME_POST_SIZE = 1000;   // длина поста, который считается игровым!  ТОЖЕ ВАЖНО
@@ -200,7 +199,7 @@ public class Main {
                 main_need_url = main_need_url.replaceFirst("id=", "action=show_user_posts&user_id="); // http://testunicorn.0pk.ru/search.php?action=show_user_posts&user_id=2&p=2
                 // усложним адрес до числа страниц
                 int rolvo = playerList.get(j).getKolvoSoobsh();
-                // количество листов с постами. именно изза этой строчки нам так важна авторизация полностью на форуме с правами админа
+                // количество листов с постами. TODO лагает количество постов! уточнить! потому что люди удаляют свои посты и счетчик ROLVO не точный...
                 int number_of_post_sheets = (( rolvo - (rolvo % PAGE_SEARCH_SIZE) )/PAGE_SEARCH_SIZE ) + 1;
 
                 // TODO добавить ограничение по датам - чтобы не ходил по ВСЕМ страницам, ибо если дата уже достигнута - дальше постов не будет.
@@ -277,7 +276,7 @@ public class Main {
                     }
                 }
             //тут мы тестово выводим весь список постов. пока что отключим.
-            //postList.forEach(System.out::println);
+            postList.forEach(System.out::println);
 
             // вывод финальных данных
             // TODO хорошо бы добавить сортировку по playerList по number_of_game_post

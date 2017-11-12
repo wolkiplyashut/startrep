@@ -7,6 +7,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import javax.swing.*;
 import java.io.*;
 import java.text.ParseException;
 import java.util.*;
@@ -263,6 +264,8 @@ public class Main {
             out.write("============================================================"+ System.getProperty("line.separator"));
             out.write("Список игроков закончен."+ System.getProperty("line.separator"));
             out.write("============================================================"+ System.getProperty("line.separator"));
+
+            JOptionPane.showMessageDialog( null, "Скрипт закончил работу. Прочерьте файл с результатами...", "Конец", JOptionPane.DEFAULT_OPTION );
 
             out.close();
 

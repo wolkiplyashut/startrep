@@ -188,11 +188,12 @@ public class Main {
                     main_need_url = main_need_url.replaceFirst("id=", "action=show_user_posts&user_id="); // http://testunicorn.0pk.ru/search.php?action=show_user_posts&user_id=2&p=2
                     // усложним адрес до числа страниц
                     int rolvo = playerList.get(j).getKolvoSoobsh();
+                    System.out.println ("Количество постов y " + playerList.get(j).getName() + " = " + rolvo);
                     // количество листов с постами. TODO лагает количество постов! уточнить! потому что люди удаляют свои посты и счетчик ROLVO не точный...
                     int number_of_post_sheets = (( rolvo - (rolvo % PAGE_SEARCH_SIZE) )/PAGE_SEARCH_SIZE ) + 1;
-
+                    System.out.println ("Количество листов постов y " + playerList.get(j).getName() + " = " + number_of_post_sheets);
                     // TODO добавить ограничение по датам - чтобы не ходил по ВСЕМ страницам, ибо если дата уже достигнута - дальше постов не будет.
-                    for (number_of_lists = 1; number_of_lists < number_of_post_sheets; number_of_lists++) {
+                    for (number_of_lists = 1; number_of_lists <= number_of_post_sheets; number_of_lists++) {
                         String need_url = main_need_url + "&p=" + number_of_lists;
 
                         res = Jsoup.connect(need_url)
@@ -266,7 +267,7 @@ public class Main {
             out.write("Список игроков закончен."+ System.getProperty("line.separator"));
             out.write("============================================================"+ System.getProperty("line.separator"));
 
-            JOptionPane.showMessageDialog( null, "Скрипт закончил работу. Прочерьте файл с результатами...", "Конец", JOptionPane.DEFAULT_OPTION );
+            JOptionPane.showMessageDialog( null, "Скрипт закончил работу. Проверьте файл с результатами...", "Конец", JOptionPane.DEFAULT_OPTION );
 
             out.close();
 

@@ -7,8 +7,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.text.ParseException;
 import java.util.*;
 
@@ -29,6 +28,7 @@ public class Main {
             fis = new FileInputStream("src/Forum/Help/PostSearcher/config.properties");
             property.load(fis);
 
+            String filePath =  property.getProperty("filePath");
             String b_date = property.getProperty("b_date");
             String e_date = property.getProperty("e_date");
             String t_date = property.getProperty("t_date");
@@ -47,13 +47,28 @@ public class Main {
             String need_forum6 = property.getProperty("need_forum6");
 
             //объявляем исходные данные
+
+            File file = new File(filePath);
+            BufferedWriter out = new BufferedWriter(new FileWriter(file));
+
+
             System.out.println ("============================================================");
             System.out.println ("Считаем посты на форуме: " + FORUM_URL);
             System.out.println ("Сегодняшняя дата = " + t_date);
+            System.out.println ("Вчерашняя дата = " + et_date);
             System.out.println ("Дата, после которой начинается отсчет = " + b_date);
             System.out.println ("Дата, до которой идет отсчет = " + e_date);
             System.out.println ("Минимальное количество символов в игровом посте = " + GAME_POST_SIZE);
             System.out.println ("============================================================");
+
+            out.write("============================================================"+ System.getProperty("line.separator"));
+            out.write("Считаем посты на форуме: " + FORUM_URL+ System.getProperty("line.separator"));
+            out.write("Сегодняшняя дата = " + t_date+ System.getProperty("line.separator"));
+            out.write("Вчерашняя дата = " + et_date+ System.getProperty("line.separator"));
+            out.write("Дата, после которой начинается отсчет = " + b_date+ System.getProperty("line.separator"));
+            out.write("Дата, до которой идет отсчет = " + e_date+ System.getProperty("line.separator"));
+            out.write("Минимальное количество символов в игровом посте = " + GAME_POST_SIZE+ System.getProperty("line.separator"));
+            out.write("============================================================"+ System.getProperty("line.separator"));
 
             // работа с календарем
 
@@ -111,6 +126,7 @@ public class Main {
             String current_log_name_string = itemElement.text();
             String current_log_name = current_log_name_string.substring(8);
             System.out.println("Вы авторизовались как - " + current_log_name);  // если тут Гость - то авторизация прошла так себе...
+            out.write("Вы авторизовались как - " + current_log_name+ System.getProperty("line.separator"));
 
             // получаем данные
             Element statElement = doc2.getElementsByAttributeValue("class", "statscon").first();
@@ -123,6 +139,7 @@ public class Main {
             // нашли число страниц с пользователями
             int stringsNumber = (( playerNumberInt - (playerNumberInt % USERS_NAME_PAGE_SIZE) )/USERS_NAME_PAGE_SIZE ) + 1;
             System.out.println("Число страниц в списке игроков = " + stringsNumber);
+            out.write("Число страниц в списке игроков = " + stringsNumber+ System.getProperty("line.separator"));
 
             // Добываем имена игроков и ссылки на их профили из Списка пользователей.
             // причем делаем это в цикле дя каждой страницы!
@@ -133,8 +150,6 @@ public class Main {
                         .cookies(cookies)
                         .method(Method.GET)
                         .execute();
-
-                //cookies = res.cookies();
 
                 Document doc3 = Jsoup.parse(res.body());
                 Elements h2Elements = doc3.getElementsByAttributeValue("class", "usersname");
@@ -154,6 +169,8 @@ public class Main {
             int size = playerList.size();
             System.out.println("Количество игроков = " + size);
             System.out.println ("============================================================");
+            out.write("Количество игроков = " + size+ System.getProperty("line.separator"));
+            out.write("============================================================"+ System.getProperty("line.separator"));
 
             // тут призываем процедуру подсчета постов этих юзеров что у нас в списке
             for ( int j = 0; j < size; j++){
@@ -236,12 +253,18 @@ public class Main {
 
                 int psize = postList.size();
                 System.out.println ("Количество постов у игрока * " + playerList.get(j).getName() + " * равно * " + psize + " * Количество игровых постов  равно * " + number_of_game_post);
-
+                out.write("Количество постов у игрока * " + playerList.get(j).getName() + " * равно * " + psize + " * Количество игровых постов  равно * " + number_of_game_post+ System.getProperty("line.separator"));
             }
 
             System.out.println ("============================================================");
             System.out.println ("Список игроков закончен.");
             System.out.println ("============================================================");
+
+            out.write("============================================================"+ System.getProperty("line.separator"));
+            out.write("Список игроков закончен."+ System.getProperty("line.separator"));
+            out.write("============================================================"+ System.getProperty("line.separator"));
+
+            out.close();
 
         } catch (IOException e) {
             System.err.println("Ошибка: Нет файла конфигурации...");

@@ -21,25 +21,6 @@ public class Main {
         String USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36";
 
         // TODO и вывод данных в тхт
-        // даты ИСКЛЮЧИТЕЛЬНЫЕ, то есть эти даты не будут обраатываться. Будут только те что между ними.
-        /*String b_date = "2017-10-29 00:00:00";  // НАЧАЛО
-        String e_date = "2017-11-06 00:00:00";  // КОНЕЦ
-        String t_date = "2017-11-12 00:00:00";  // СЕГОДНЯ TODO потом пусть сам вычисляет!
-        String et_date = "2017-11-11 00:00:00";  // ВЧЕРА //пришлось добавить чтобы не лагал календарь несчастный.
-*/
-        /*String FORUM_URL = "http://wildhunted.rusff.ru";
-        Integer GAME_POST_SIZE = 1000;   // длина поста, который считается игровым!  ТОЖЕ ВАЖНО
-        Integer USERS_NAME_PAGE_SIZE = 50; // количество игроков в списке игроков
-        Integer PAGE_SEARCH_SIZE = 30; // число постов на странице поиска, 20 на фиаре, 30 - на охоте! надо будет это учесть!
-        String USER_NAME = "Arthur Grant";
-        String PASSWORD = "nasa1313";*/
-
-       /* String need_forum1 = "au";
-        String need_forum2 = "storyline";
-        String need_forum3 = "real time";
-        String need_forum4 = "flash";
-        String need_forum5 = "abandoned episodes";
-        String need_forum6 = "closed episodes";*/
 
         //импорт данных из конфиг.пропертис
         FileInputStream fis;
@@ -74,7 +55,7 @@ public class Main {
             System.out.println ("Минимальное количество символов в игровом посте = " + GAME_POST_SIZE);
             System.out.println ("============================================================");
 
-            // работа с календарем TODO убрать в процедуры
+            // работа с календарем
 
             Calendar b_Calendar = stringToDateFormat(b_date);
             Date begin_date = b_Calendar.getTime();
@@ -137,7 +118,6 @@ public class Main {
             Element liElement = conElement.child(2);
             Element strongElement = liElement.getElementsByTag("strong").first();
             String playerNumber = strongElement.text();
-            //System.out.println("Число игроков = " + playerNumber);  дублирование, выдается ниже. обычно совпадает.
             //нашли число игроков, теперь найдем число страниц в списке игроков.
             int playerNumberInt = Integer.parseInt(playerNumber);
             // нашли число страниц с пользователями
@@ -170,7 +150,6 @@ public class Main {
                 });
             }
 
-
             // Выводим эти данные в консоль
             int size = playerList.size();
             System.out.println("Количество игроков = " + size);
@@ -180,7 +159,6 @@ public class Main {
             for ( int j = 0; j < size; j++){
                 String author_url = playerList.get(j).getUrl();
                 Integer number_of_game_post = 0;
-
 
                 List<Post> postList = new ArrayList<>();
                 Integer number_of_lists = 1;
@@ -203,8 +181,6 @@ public class Main {
                                 .cookies(cookies)
                                 .method(Method.GET)
                                 .execute();
-
-                        //cookies = res.cookies();
 
                         Document doc4 = Jsoup.parse(res.body());
 

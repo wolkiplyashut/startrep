@@ -61,36 +61,6 @@ public class Main {
         Calendar et_Calendar = stringToDateFormat(et_date);
         Date etoday_date = et_Calendar.getTime();
 
-        /*String b_year_string = b_date.substring(0,4);
-        String b_month_string = b_date.substring(5,7);
-        String b_day_string = b_date.substring(8);
-        int b_year = Integer.parseInt(b_year_string);
-        int b_month = Integer.parseInt(b_month_string);
-        int b_day = Integer.parseInt(b_day_string);
-        Calendar b_calendar = new GregorianCalendar(b_year, b_month-1, b_day);
-        Date begin_date = b_calendar.getTime();*/
-
-        /*String e_year_string = e_date.substring(0,4);
-        String e_month_string = e_date.substring(5,7);
-        String e_day_string = e_date.substring(8);
-        int e_year = Integer.parseInt(e_year_string);
-        int e_month = Integer.parseInt(e_month_string);
-        int e_day = Integer.parseInt(e_day_string);
-        Calendar e_calendar = new GregorianCalendar(e_year, e_month-1, e_day);
-        Date end_date = e_calendar.getTime();*/
-
-        /*String t_year_string = t_date.substring(0,4);
-        String t_month_string = t_date.substring(5,7);
-        String t_day_string = t_date.substring(8);
-        int t_year = Integer.parseInt(t_year_string);
-        int t_month = Integer.parseInt(t_month_string);
-        int t_day = Integer.parseInt(t_day_string);
-        Calendar t_calendar = new GregorianCalendar(t_year, t_month-1, t_day);
-        Date today_date = t_calendar.getTime();*/
-
-        //добавим контроль над потоком
-        //Thread mainThread = Thread.currentThread();
-
         // логинимся и соханяем кукисы впредь
         String login_url = FORUM_URL + "/login.php";
 
@@ -118,8 +88,6 @@ public class Main {
                 .method(Method.POST)
                 .execute();
         cookies.putAll(res.cookies());
-        //выведем результат
-        //System.out.println("Успешная авторизация: " + res.statusCode());
 
         //Узнаем сколько у нас страниц с пользователями.
         //сперва придется таки узнать сколько у нас игроков
@@ -236,32 +204,17 @@ public class Main {
                             Calendar post_Calendar = stringToDateFormat(string_date);
                             post_date = post_Calendar.getTime();
 
-                           /* String post_year_string = string_date.substring(0, 4);
-                            String post_month_string = string_date.substring(5, 7);
-                            String post_day_string = string_date.substring(8, 10);
-                            int post_year = Integer.parseInt(post_year_string);
-                            int post_month = Integer.parseInt(post_month_string);
-                            int post_day = Integer.parseInt(post_day_string);
-                            Calendar post_calendar = new GregorianCalendar(post_year, post_month - 1, post_day);
-                            post_date = post_calendar.getTime();*/
-
                         } else {
                             int index1 = string_date.indexOf("Сегодня");
                             int index2 = string_date.indexOf("Вчера");
                             if (index1 != -1){
-                                /*Calendar post_calendar = new GregorianCalendar(t_year, t_month - 1, t_day);
-                                post_date = post_calendar.getTime();*/
                                 post_date = today_date;
+
                             } else {
                                 if (index2 != -1){
-                                    /*Calendar post_calendar = new GregorianCalendar(t_year, t_month - 1, t_day);
-                                    post_Calendar.add(Calendar.DAY_OF_YEAR, -1);
-                                    post_date = post_Calendar.getTime();*/
                                     post_date = etoday_date;
 
                                 } else {
-                                    /*Calendar post_calendar = new GregorianCalendar(t_year, t_month - 1, t_day);
-                                    post_date = post_calendar.getTime();*/
                                     post_date = today_date;
                                 }
                             }
@@ -275,7 +228,7 @@ public class Main {
                         }
                     }
                 }
-            //тут мы тестово выводим весь список постов. пока что отключим.
+            //тут мы тестово выводим весь список постов. отключим после тестирования.
             postList.forEach(System.out::println);
 
             // вывод финальных данных

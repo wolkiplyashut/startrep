@@ -12,6 +12,52 @@ import java.io.*;
 import java.text.ParseException;
 import java.util.*;
 
+
+class Settings {
+    String filePath;
+    String b_date;
+    String e_date;
+    String t_date;
+    String et_date;
+    String FORUM_URL;
+    Integer GAME_POST_SIZE;
+    Integer USERS_NAME_PAGE_SIZE;
+    Integer PAGE_SEARCH_SIZE;
+    String USER_NAME;
+    String PASSWORD;
+    String need_forum1;
+    String need_forum2;
+    String need_forum3;
+    String need_forum4;
+    String need_forum5;
+    String need_forum6;
+
+
+    Settings(String filename) throws IOException {
+
+        Properties property = new Properties();
+        property.load(new FileInputStream(filename));
+
+        filePath =  property.getProperty("filePath");
+        b_date = property.getProperty("b_date");
+        e_date = property.getProperty("e_date");
+        t_date = property.getProperty("t_date");
+        et_date = property.getProperty("et_date");
+        FORUM_URL = property.getProperty("FORUM_URL");
+        GAME_POST_SIZE = Integer.parseInt(property.getProperty("GAME_POST_SIZE"));   // длина поста, который считается игровым!  ТОЖЕ ВАЖНО
+        USERS_NAME_PAGE_SIZE = Integer.parseInt(property.getProperty("USERS_NAME_PAGE_SIZE")); // количество игроков в списке игроков
+        PAGE_SEARCH_SIZE = Integer.parseInt(property.getProperty("PAGE_SEARCH_SIZE")); // число постов на странице поиска, 20 на фиаре, 30 - на охоте! надо будет это учесть!
+        USER_NAME = property.getProperty("USER_NAME");
+        PASSWORD = property.getProperty("PASSWORD");
+        need_forum1 = property.getProperty("need_forum1");  //TODO сделать имена форумов массивом или списком... потому что их количество может быть разное. сравнивать неудобно там ниже...
+        need_forum2 = property.getProperty("need_forum2");
+        need_forum3 = property.getProperty("need_forum3");
+        need_forum4 = property.getProperty("need_forum4");
+        need_forum5 = property.getProperty("need_forum5");
+        need_forum6 = property.getProperty("need_forum6");
+
+    }
+}
 public class Main {
 
     public static void main(String[] args) throws IOException, ParseException {
@@ -21,70 +67,50 @@ public class Main {
         String USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36";
 
         //dialog windows
-        JOptionPane.showMessageDialog( null, "Скрипт начал работу...", "Подсчет постов", JOptionPane.DEFAULT_OPTION );
+        //JOptionPane.showMessageDialog( null, "Скрипт начал работу...", "Подсчет постов", JOptionPane.DEFAULT_OPTION );
 
         //импорт данных из конфиг.пропертис
-        FileInputStream fis;
-        Properties property = new Properties();
-        try {
-            fis = new FileInputStream("src/Forum/Help/PostSearcher/config.properties");
-            property.load(fis);
 
-            String filePath =  property.getProperty("filePath");
-            String b_date = property.getProperty("b_date");
-            String e_date = property.getProperty("e_date");
-            String t_date = property.getProperty("t_date");
-            String et_date = property.getProperty("et_date");
-            String FORUM_URL = property.getProperty("FORUM_URL");
-            Integer GAME_POST_SIZE = Integer.parseInt(property.getProperty("GAME_POST_SIZE"));   // длина поста, который считается игровым!  ТОЖЕ ВАЖНО
-            Integer USERS_NAME_PAGE_SIZE = Integer.parseInt(property.getProperty("USERS_NAME_PAGE_SIZE")); // количество игроков в списке игроков
-            Integer PAGE_SEARCH_SIZE = Integer.parseInt(property.getProperty("PAGE_SEARCH_SIZE")); // число постов на странице поиска, 20 на фиаре, 30 - на охоте! надо будет это учесть!
-            String USER_NAME = property.getProperty("USER_NAME");
-            String PASSWORD = property.getProperty("PASSWORD");
-            String need_forum1 = property.getProperty("need_forum1");  //TODO сделать имена форумов массивом или списком... потому что их количество может быть разное. сравнивать неудобно там ниже...
-            String need_forum2 = property.getProperty("need_forum2");
-            String need_forum3 = property.getProperty("need_forum3");
-            String need_forum4 = property.getProperty("need_forum4");
-            String need_forum5 = property.getProperty("need_forum5");
-            String need_forum6 = property.getProperty("need_forum6");
+        Settings settings = new Settings("src/Forum/Help/PostSearcher/config.properties");
+        try {
 
             //объявляем исходные данные
 
-            File file = new File(filePath);
+            File file = new File(settings.filePath);
             BufferedWriter out = new BufferedWriter(new FileWriter(file));
 
 
             System.out.println ("============================================================");
-            System.out.println ("Считаем посты на форуме: " + FORUM_URL);
-            System.out.println ("Сегодняшняя дата = " + t_date);
-            System.out.println ("Вчерашняя дата = " + et_date);
-            System.out.println ("Дата, после которой начинается отсчет = " + b_date);
-            System.out.println ("Дата, до которой идет отсчет = " + e_date);
-            System.out.println ("Минимальное количество символов в игровом посте = " + GAME_POST_SIZE);
+            System.out.println ("Считаем посты на форуме: " + settings.FORUM_URL);
+            System.out.println ("Сегодняшняя дата = " + settings.t_date);
+            System.out.println ("Вчерашняя дата = " + settings.et_date);
+            System.out.println ("Дата, после которой начинается отсчет = " + settings.b_date);
+            System.out.println ("Дата, до которой идет отсчет = " + settings.e_date);
+            System.out.println ("Минимальное количество символов в игровом посте = " + settings.GAME_POST_SIZE);
             System.out.println ("============================================================");
 
             out.write("============================================================"+ System.getProperty("line.separator"));
-            out.write("Считаем посты на форуме: " + FORUM_URL+ System.getProperty("line.separator"));
-            out.write("Сегодняшняя дата = " + t_date+ System.getProperty("line.separator"));
-            out.write("Вчерашняя дата = " + et_date+ System.getProperty("line.separator"));
-            out.write("Дата, после которой начинается отсчет = " + b_date+ System.getProperty("line.separator"));
-            out.write("Дата, до которой идет отсчет = " + e_date+ System.getProperty("line.separator"));
-            out.write("Минимальное количество символов в игровом посте = " + GAME_POST_SIZE+ System.getProperty("line.separator"));
+            out.write("Считаем посты на форуме: " + settings.FORUM_URL+ System.getProperty("line.separator"));
+            out.write("Сегодняшняя дата = " + settings.t_date+ System.getProperty("line.separator"));
+            out.write("Вчерашняя дата = " + settings.et_date+ System.getProperty("line.separator"));
+            out.write("Дата, после которой начинается отсчет = " + settings.b_date + System.getProperty("line.separator"));
+            out.write("Дата, до которой идет отсчет = " + settings.e_date+ System.getProperty("line.separator"));
+            out.write("Минимальное количество символов в игровом посте = " + settings.GAME_POST_SIZE+ System.getProperty("line.separator"));
             out.write("============================================================"+ System.getProperty("line.separator"));
 
             // работа с календарем
 
-            Calendar b_Calendar = stringToDateFormat(b_date);
+            Calendar b_Calendar = stringToDateFormat(settings.b_date);
             Date begin_date = b_Calendar.getTime();
-            Calendar e_Calendar = stringToDateFormat(e_date);
+            Calendar e_Calendar = stringToDateFormat(settings.e_date);
             Date end_date = e_Calendar.getTime();
-            Calendar t_Calendar = stringToDateFormat(t_date);
+            Calendar t_Calendar = stringToDateFormat(settings.t_date);
             Date today_date = t_Calendar.getTime();
-            Calendar et_Calendar = stringToDateFormat(et_date);
+            Calendar et_Calendar = stringToDateFormat(settings.et_date);
             Date etoday_date = et_Calendar.getTime();
 
             // логинимся и соханяем кукисы впредь
-            String login_url = FORUM_URL + "/login.php";
+            String login_url = settings.FORUM_URL + "/login.php";
 
             // АВТОРИЗАЦИЯ РАБОЧАЯ
 
@@ -102,8 +128,8 @@ public class Main {
                     .connect(login_url+"?action=in")
                     .timeout(5000)
                     .userAgent(USER_AGENT)
-                    .data("req_username", USER_NAME)
-                    .data("req_password", PASSWORD)
+                    .data("req_username", settings.USER_NAME)
+                    .data("req_password", settings.PASSWORD)
                     .data("form_sent", "1")
                     .data("redirect_url", "")
                     .cookies(cookies)
@@ -113,7 +139,7 @@ public class Main {
 
             //Узнаем сколько у нас страниц с пользователями.
             //сперва придется таки узнать сколько у нас игроков
-            res = Jsoup.connect(FORUM_URL)
+            res = Jsoup.connect(settings.FORUM_URL)
                     .userAgent(USER_AGENT)
                     .cookies(cookies)
                     .method(Method.GET)
@@ -123,10 +149,10 @@ public class Main {
 
             Document doc2 = Jsoup.parse(res.body());
             //проверяем мы ли это
-            Element statusElement = doc2.getElementById("pun-status");
-            Element itemElement = statusElement.getElementsByClass("item1").first();
+            Element itemElement = doc2.select("#pun-status .item1").first();
             String current_log_name_string = itemElement.text();
             String current_log_name = current_log_name_string.substring(8);
+
             System.out.println("Вы авторизовались как - " + current_log_name);  // если тут Гость - то авторизация прошла так себе...
             out.write("Вы авторизовались как - " + current_log_name+ System.getProperty("line.separator"));
 
@@ -139,7 +165,7 @@ public class Main {
             //нашли число игроков, теперь найдем число страниц в списке игроков.
             int playerNumberInt = Integer.parseInt(playerNumber);
             // нашли число страниц с пользователями
-            int stringsNumber = (( playerNumberInt - (playerNumberInt % USERS_NAME_PAGE_SIZE) )/USERS_NAME_PAGE_SIZE ) + 1;
+            int stringsNumber = (( playerNumberInt - (playerNumberInt % settings.USERS_NAME_PAGE_SIZE) )/settings.USERS_NAME_PAGE_SIZE ) + 1;
             System.out.println("Число страниц в списке игроков = " + stringsNumber);
             out.write("Число страниц в списке игроков = " + stringsNumber+ System.getProperty("line.separator"));
 
@@ -147,7 +173,7 @@ public class Main {
             // причем делаем это в цикле дя каждой страницы!
             for (int k = 1; k < stringsNumber + 1 ; k++ ){
 
-                res = Jsoup.connect(FORUM_URL + "/userlist.php?show_group=-1&sort_by=last_visit&sort_dir=DESC&username=-&p=" + k)
+                res = Jsoup.connect(settings.FORUM_URL + "/userlist.php?show_group=-1&sort_by=last_visit&sort_dir=DESC&username=-&p=" + k)
                         .userAgent(USER_AGENT)
                         .cookies(cookies)
                         .method(Method.GET)
@@ -190,7 +216,7 @@ public class Main {
                     int rolvo = playerList.get(j).getKolvoSoobsh();
                     System.out.println ("Количество постов y " + playerList.get(j).getName() + " = " + rolvo);
                     // количество листов с постами. TODO лагает количество постов! уточнить! потому что люди удаляют свои посты и счетчик ROLVO не точный...
-                    int number_of_post_sheets = (( rolvo - (rolvo % PAGE_SEARCH_SIZE) )/PAGE_SEARCH_SIZE ) + 1;
+                    int number_of_post_sheets = (( rolvo - (rolvo % settings.PAGE_SEARCH_SIZE) )/settings.PAGE_SEARCH_SIZE ) + 1;
                     System.out.println ("Количество листов постов y " + playerList.get(j).getName() + " = " + number_of_post_sheets);
                     // TODO добавить ограничение по датам - чтобы не ходил по ВСЕМ страницам, ибо если дата уже достигнута - дальше постов не будет.
                     for (number_of_lists = 1; number_of_lists <= number_of_post_sheets; number_of_lists++) {
@@ -241,7 +267,7 @@ public class Main {
                             }
 
                             if (begin_date.before(post_date) && end_date.after(post_date)) {    // сравним пост по дате - вообще попадать ли ему сюда!
-                                if (post_size > GAME_POST_SIZE && (podforum_name.compareTo(need_forum1) == 0 ||  podforum_name.compareTo(need_forum2) == 0 ||  podforum_name.compareTo(need_forum3) == 0 ||  podforum_name.compareTo(need_forum4) == 0 || podforum_name.compareTo(need_forum5) == 0 || podforum_name.compareTo(need_forum6) == 0 )) {
+                                if (post_size > settings.GAME_POST_SIZE && (podforum_name.compareTo(settings.need_forum1) == 0 ||  podforum_name.compareTo(settings.need_forum2) == 0 ||  podforum_name.compareTo(settings.need_forum3) == 0 ||  podforum_name.compareTo(settings.need_forum4) == 0 || podforum_name.compareTo(settings.need_forum5) == 0 || podforum_name.compareTo(settings.need_forum6) == 0 )) {
                                     number_of_game_post = number_of_game_post + 1;   //условный размер игрового поста
                                 }
                                 postList.add(new Post(playerList.get(j).getName(), post_size, string_date, number_of_game_post, podforum_name));  // имя автора можем достать из шапки поста - но зачем оно тут нам?

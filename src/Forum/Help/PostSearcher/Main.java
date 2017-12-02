@@ -209,72 +209,68 @@ public class Main {
                 Integer number_of_lists = 1;
                 Boolean enough = false;
 
-                    // мы имеем не совсем тот адрес на руках. преобразуем. http://yaoi.9bb.ru/profile.php?id=2106 в - http://yaoi.9bb.ru/search.php?action=show_user_posts&user_id=2106
-                    String main_need_url = author_url.replaceFirst("profile", "search");
-                    main_need_url = main_need_url.replaceFirst("id=", "action=show_user_posts&user_id="); // http://testunicorn.0pk.ru/search.php?action=show_user_posts&user_id=2&p=2
-                    // усложним адрес до числа страниц
-                    int rolvo = playerList.get(j).getKolvoSoobsh();
-                    System.out.println ("Количество постов y " + playerList.get(j).getName() + " = " + rolvo);
-                    // количество листов с постами. TODO лагает количество постов! уточнить! потому что люди удаляют свои посты и счетчик ROLVO не точный...
-                    int number_of_post_sheets = (( rolvo - (rolvo % settings.PAGE_SEARCH_SIZE) )/settings.PAGE_SEARCH_SIZE ) + 1;
-                    System.out.println ("Количество листов постов y " + playerList.get(j).getName() + " = " + number_of_post_sheets);
-                    // TODO добавить ограничение по датам - чтобы не ходил по ВСЕМ страницам, ибо если дата уже достигнута - дальше постов не будет.
-                    for (number_of_lists = 1; number_of_lists <= number_of_post_sheets; number_of_lists++) {
-                        String need_url = main_need_url + "&p=" + number_of_lists;
+                // мы имеем не совсем тот адрес на руках. преобразуем. http://yaoi.9bb.ru/profile.php?id=2106 в - http://yaoi.9bb.ru/search.php?action=show_user_posts&user_id=2106
+                String main_need_url = author_url.replaceFirst("profile", "search");
+                main_need_url = main_need_url.replaceFirst("id=", "action=show_user_posts&user_id="); // http://testunicorn.0pk.ru/search.php?action=show_user_posts&user_id=2&p=2
+                // усложним адрес до числа страниц
+                int rolvo = playerList.get(j).getKolvoSoobsh();
+                System.out.println ("Количество постов y " + playerList.get(j).getName() + " = " + rolvo);
+                // количество листов с постами. TODO лагает количество постов! уточнить! потому что люди удаляют свои посты и счетчик ROLVO не точный...
+                int number_of_post_sheets = (( rolvo - (rolvo % settings.PAGE_SEARCH_SIZE) )/settings.PAGE_SEARCH_SIZE ) + 1;
+                System.out.println ("Количество листов постов y " + playerList.get(j).getName() + " = " + number_of_post_sheets);
+                // TODO добавить ограничение по датам - чтобы не ходил по ВСЕМ страницам, ибо если дата уже достигнута - дальше постов не будет.
+                for (number_of_lists = 1; number_of_lists <= number_of_post_sheets; number_of_lists++) {
+                    String need_url = main_need_url + "&p=" + number_of_lists;
 
-                        res = Jsoup.connect(need_url)
-                                .userAgent(USER_AGENT)
-                                .cookies(cookies)
-                                .method(Method.GET)
-                                .execute();
-                        //собираем данные о постах
-                        Document doc4 = Jsoup.parse(res.body());
+                    res = Jsoup.connect(need_url)
+                            .userAgent(USER_AGENT)
+                            .cookies(cookies)
+                            .method(Method.GET)
+                            .execute();
+                    //собираем данные о постах
+                    Document doc4 = Jsoup.parse(res.body());
 
-                        //находим все посты на странице
-                        Elements postElements = doc4.select("div.post");
-                        //для каждого поста находим данные
-                        for (Element postElement : postElements) {
-                            //получим имя подфорума
-                            String podforum_name = postElement.child(0).child(0).child(1).text();
-                            //получим адрес поста
-                            String post_url = postElement.child(0).child(0).child(3).attr("href");
-                            //получим строку с датой поста
-                            String string_date = postElement.child(0).child(0).child(3).text();
-                            //получим текст поста
-                            String post_text = postElement.child(1).child(1).text();
-                            //получим количество символов в посте
-                            Integer post_size = post_text.length();
-                            Date post_date = null;
-                            // разберемся с датой и проверки добавим на сегодня-вчера
-                            if(string_date.length() == 19) {
-                                Integer get_inside = 1;
-                                Calendar post_Calendar = stringToDateFormat(string_date);
-                                post_date = post_Calendar.getTime();
-
+                    //находим все посты на странице
+                    Elements postElements = doc4.select("div.post");
+                    //для каждого поста находим данные
+                    for (Element postElement : postElements) {
+                        //получим имя подфорума
+                        String podforum_name = postElement.child(0).child(0).child(1).text();
+                        //получим адрес поста
+                        String post_url = postElement.child(0).child(0).child(3).attr("href");
+                        //получим строку с датой поста
+                        String string_date = postElement.child(0).child(0).child(3).text();
+                        //получим текст поста
+                        String post_text = postElement.child(1).child(1).text();
+                        //получим количество символов в посте
+                        Integer post_size = post_text.length();
+                        Date post_date = null;
+                        // Определим дату
+                        if((string_date.contains("Сегодня") != true) && (string_date.contains("Вчера") != true) ) {
+                            Calendar post_Calendar = stringToDateFormat(string_date);
+                            post_date = post_Calendar.getTime();
+                        } else {
+                            //если дата содержит слово "Сегодня" то присвоим ей сегодняшнюю дату
+                            if (string_date.contains("Сегодня") == true){
+                                post_date = today_date;
+                                //если дата содержит слово "Вчера" то присвоим ей вчерашнюю дату
                             } else {
-                                int index1 = string_date.indexOf("Сегодня");
-                                int index2 = string_date.indexOf("Вчера");
-                                if (index1 != -1){
-                                    post_date = today_date;
-
+                                if (string_date.contains("Вчера") == true){
+                                    post_date = etoday_date;
                                 } else {
-                                    if (index2 != -1){
-                                        post_date = etoday_date;
-
-                                    } else {
-                                        post_date = today_date;
-                                    }
+                                    post_date = today_date;
                                 }
-                            }
-
-                            if (begin_date.before(post_date) && end_date.after(post_date)) {    // сравним пост по дате - вообще попадать ли ему сюда!
-                                if (post_size > settings.GAME_POST_SIZE && (podforum_name.compareTo(settings.need_forum1) == 0 ||  podforum_name.compareTo(settings.need_forum2) == 0 ||  podforum_name.compareTo(settings.need_forum3) == 0 ||  podforum_name.compareTo(settings.need_forum4) == 0 || podforum_name.compareTo(settings.need_forum5) == 0 || podforum_name.compareTo(settings.need_forum6) == 0 )) {
-                                    number_of_game_post = number_of_game_post + 1;   //условный размер игрового поста
-                                }
-                                postList.add(new Post(playerList.get(j).getName(), post_size, string_date, number_of_game_post, podforum_name));  // имя автора можем достать из шапки поста - но зачем оно тут нам?
                             }
                         }
+
+                        if (begin_date.before(post_date) && end_date.after(post_date)) {    // сравним пост по дате - вообще попадать ли ему сюда!
+                            if (post_size > settings.GAME_POST_SIZE && (podforum_name.compareTo(settings.need_forum1) == 0 ||  podforum_name.compareTo(settings.need_forum2) == 0 ||  podforum_name.compareTo(settings.need_forum3) == 0 ||  podforum_name.compareTo(settings.need_forum4) == 0 || podforum_name.compareTo(settings.need_forum5) == 0 || podforum_name.compareTo(settings.need_forum6) == 0 )) {
+                                number_of_game_post = number_of_game_post + 1;   //условный размер игрового поста
+                            }
+                            postList.add(new Post(playerList.get(j).getName(), post_size, string_date, number_of_game_post, podforum_name));  // имя автора можем достать из шапки поста - но зачем оно тут нам?
+                        }
                     }
+                }
                 //тут мы тестово выводим весь список постов. отключим после тестирования.
                 postList.forEach(System.out::println);
 

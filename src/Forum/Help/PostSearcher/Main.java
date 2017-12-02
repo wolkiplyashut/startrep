@@ -227,21 +227,22 @@ public class Main {
                                 .cookies(cookies)
                                 .method(Method.GET)
                                 .execute();
-
+                        //собираем данные о постах
                         Document doc4 = Jsoup.parse(res.body());
 
-                        Elements postElements = doc4.getElementsByAttributeValue("class", "post");
-
+                        //находим все посты на странице
+                        Elements postElements = doc4.select("div.post");
+                        //для каждого поста находим данные
                         for (Element postElement : postElements) {
-                            Element h3Element = postElement.child(0);
-                            Element spanElement = h3Element.child(0);
-                            String podforum_name = spanElement.child(1).text();
-                            // тестовое значение
-                            String post_url = spanElement.child(3).attr("href");
-                            String string_date = spanElement.child(3).text();
-                            Element contElement = postElement.child(1);
-                            Element postbodyElement = contElement.child(1);
-                            String post_text = postbodyElement.text();
+                            //получим имя подфорума
+                            String podforum_name = postElement.child(0).child(0).child(1).text();
+                            //получим адрес поста
+                            String post_url = postElement.child(0).child(0).child(3).attr("href");
+                            //получим строку с датой поста
+                            String string_date = postElement.child(0).child(0).child(3).text();
+                            //получим текст поста
+                            String post_text = postElement.child(1).child(1).text();
+                            //получим количество символов в посте
                             Integer post_size = post_text.length();
                             Date post_date = null;
                             // разберемся с датой и проверки добавим на сегодня-вчера

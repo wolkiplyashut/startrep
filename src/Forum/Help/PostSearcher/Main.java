@@ -157,12 +157,9 @@ public class Main {
             out.write("Вы авторизовались как - " + current_log_name+ System.getProperty("line.separator"));
 
             // получаем данные
-            Element statElement = doc2.getElementsByAttributeValue("class", "statscon").first();
-            Element conElement = statElement.child(0);
-            Element liElement = conElement.child(2);
-            Element strongElement = liElement.getElementsByTag("strong").first();
-            String playerNumber = strongElement.text();
+            Element liElement = doc2.select("div.statscon").first().child(0).child(2);
             //нашли число игроков, теперь найдем число страниц в списке игроков.
+            String playerNumber = liElement.select("strong").first().text();
             int playerNumberInt = Integer.parseInt(playerNumber);
             // нашли число страниц с пользователями
             int stringsNumber = (( playerNumberInt - (playerNumberInt % settings.USERS_NAME_PAGE_SIZE) )/settings.USERS_NAME_PAGE_SIZE ) + 1;

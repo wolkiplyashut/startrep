@@ -167,25 +167,28 @@ public class Main {
             out.write("Число страниц в списке игроков = " + stringsNumber+ System.getProperty("line.separator"));
 
             // Добываем имена игроков и ссылки на их профили из Списка пользователей.
-            // причем делаем это в цикле дя каждой страницы!
-            for (int k = 1; k < stringsNumber + 1 ; k++ ){
+            // причем делаем это в цикле для каждой страницы!
+            for (int numberOfPlayerPage = 1; numberOfPlayerPage < stringsNumber + 1 ; numberOfPlayerPage++ ){
 
-                res = Jsoup.connect(settings.FORUM_URL + "/userlist.php?show_group=-1&sort_by=last_visit&sort_dir=DESC&username=-&p=" + k)
+                res = Jsoup.connect(settings.FORUM_URL + "/userlist.php?show_group=-1&sort_by=last_visit&sort_dir=DESC&username=-&p=" + numberOfPlayerPage)
                         .userAgent(USER_AGENT)
                         .cookies(cookies)
                         .method(Method.GET)
                         .execute();
 
                 Document doc3 = Jsoup.parse(res.body());
-                Elements h2Elements = doc3.getElementsByAttributeValue("class", "usersname");
+                //ищем данные о пользователях
+                Elements h2Elements = doc3.select("span.usersname");
+
                 h2Elements.forEach((Element h2Element) -> {
+                    //получим имя пользователя
                     String name = h2Element.child(0).text();
+                    //получим ссылку на его профиль
                     String url = h2Element.child(0).attr("href");
-                    Element tc1Element = h2Element.parent();
-                    Element altElement = tc1Element.parent();
-                    Element soobshElement = altElement.child(3);
-                    String kolvo_soobsh_string = soobshElement.text();
+                    //получим количество сообщений пользователя
+                    String kolvo_soobsh_string = h2Element.parent().parent().child(3).text();
                     Integer all_post_number = Integer.parseInt(kolvo_soobsh_string);
+                    //добавим эти данные в массив
                     playerList.add(new Player(url, name, all_post_number));
                 });
             }

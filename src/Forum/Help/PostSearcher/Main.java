@@ -1,6 +1,5 @@
 package Forum.Help.PostSearcher;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.jsoup.Connection;
 import org.jsoup.Connection.Method;
 import org.jsoup.Jsoup;
@@ -12,7 +11,6 @@ import javax.swing.*;
 import java.io.*;
 import java.text.ParseException;
 import java.util.*;
-
 
 class Settings {
     String filePath;
@@ -27,7 +25,6 @@ class Settings {
     String USER_NAME;
     String PASSWORD;
     String[] need_forums_array;
-    String[] parts;
 
     Settings(String filename) throws IOException {
 
@@ -45,8 +42,8 @@ class Settings {
         PAGE_SEARCH_SIZE = Integer.parseInt(property.getProperty("PAGE_SEARCH_SIZE")); // число постов на странице поиска, 20 на фиаре, 30 - на охоте! надо будет это учесть!
         USER_NAME = property.getProperty("USER_NAME");
         PASSWORD = property.getProperty("PASSWORD");
-        //соберем массив из наименований форумов
-        parts = property.getProperty("need_forums_array").split(";");
+        //соберем массив из наименований подфорумов
+        String[] parts = property.getProperty("need_forums_array").split(";");
         need_forums_array = new String[parts.length];
         for (int i = 0; i < parts.length; ++i)
         {
@@ -202,7 +199,6 @@ public class Main {
                 Integer number_of_game_post = 0;
 
                 List<Post> postList = new ArrayList<>();
-                Integer number_of_lists = 1;
 
                 // мы имеем не совсем тот адрес на руках. преобразуем. http://yaoi.9bb.ru/profile.php?id=2106 в - http://yaoi.9bb.ru/search.php?action=show_user_posts&user_id=2106
                 String main_need_url = author_url.replaceFirst("profile", "search");
@@ -214,7 +210,7 @@ public class Main {
                 int number_of_post_sheets = (( playersNumberOfMessages - (playersNumberOfMessages % settings.PAGE_SEARCH_SIZE) )/settings.PAGE_SEARCH_SIZE ) + 1;
                 System.out.println ("Количество листов постов y " + playerList.get(j).getName() + " = " + number_of_post_sheets);
                 // TODO добавить ограничение по датам - чтобы не ходил по ВСЕМ страницам, ибо если дата уже достигнута - дальше постов не будет.
-                for (number_of_lists = 1; number_of_lists <= number_of_post_sheets; number_of_lists++) {
+                for (int number_of_lists = 1; number_of_lists <= number_of_post_sheets; number_of_lists++) {
                     String need_url = main_need_url + "&p=" + number_of_lists;
 
                     res = Jsoup.connect(need_url)
@@ -288,7 +284,7 @@ public class Main {
             out.write("Список игроков закончен."+ System.getProperty("line.separator"));
             out.write("============================================================"+ System.getProperty("line.separator"));
 
-            JOptionPane.showMessageDialog( null, "Скрипт закончил работу. Проверьте файл с результатами...", "Конец", JOptionPane.DEFAULT_OPTION );
+            JOptionPane.showMessageDialog( null, "Скрипт закончил работу. Проверьте файл с результатами...", "Конец", JOptionPane.INFORMATION_MESSAGE );
             out.close();
 
         } catch (IOException e) {

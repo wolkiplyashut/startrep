@@ -1,5 +1,6 @@
 package Forum.Help.PostSearcher;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.jsoup.Connection;
 import org.jsoup.Connection.Method;
 import org.jsoup.Jsoup;
@@ -25,12 +26,15 @@ class Settings {
     Integer PAGE_SEARCH_SIZE;
     String USER_NAME;
     String PASSWORD;
-    String need_forum1;
-    String need_forum2;
-    String need_forum3;
-    String need_forum4;
-    String need_forum5;
-    String need_forum6;
+    Integer ArrayForumSize;
+    String[] need_forums_array;
+    String[] parts;
+    //String need_forum1;
+    //String need_forum2;
+    //String need_forum3;
+    //String need_forum4;
+    //String need_forum5;
+    //String need_forum6;
 
 
     Settings(String filename) throws IOException {
@@ -49,12 +53,21 @@ class Settings {
         PAGE_SEARCH_SIZE = Integer.parseInt(property.getProperty("PAGE_SEARCH_SIZE")); // число постов на странице поиска, 20 на фиаре, 30 - на охоте! надо будет это учесть!
         USER_NAME = property.getProperty("USER_NAME");
         PASSWORD = property.getProperty("PASSWORD");
-        need_forum1 = property.getProperty("need_forum1");  //TODO сделать имена форумов массивом или списком... потому что их количество может быть разное. сравнивать неудобно там ниже...
-        need_forum2 = property.getProperty("need_forum2");
-        need_forum3 = property.getProperty("need_forum3");
-        need_forum4 = property.getProperty("need_forum4");
-        need_forum5 = property.getProperty("need_forum5");
-        need_forum6 = property.getProperty("need_forum6");
+        //соберем массив из наименований форумов
+        parts = property.getProperty("need_forums_array").split(";");
+        Integer ArrayForumSize = parts.length;
+        need_forums_array = new String[ArrayForumSize];
+        for (int i = 0; i < ArrayForumSize; ++i)
+        {
+            need_forums_array[i] = String.valueOf(parts[i]);
+        }
+
+        //need_forum1 = property.getProperty("need_forum1");
+        //need_forum2 = property.getProperty("need_forum2");
+        //need_forum3 = property.getProperty("need_forum3");
+        //need_forum4 = property.getProperty("need_forum4");
+        //need_forum5 = property.getProperty("need_forum5");
+        //need_forum6 = property.getProperty("need_forum6");
 
     }
 }
@@ -207,7 +220,6 @@ public class Main {
 
                 List<Post> postList = new ArrayList<>();
                 Integer number_of_lists = 1;
-                Boolean enough = false;
 
                 // мы имеем не совсем тот адрес на руках. преобразуем. http://yaoi.9bb.ru/profile.php?id=2106 в - http://yaoi.9bb.ru/search.php?action=show_user_posts&user_id=2106
                 String main_need_url = author_url.replaceFirst("profile", "search");
@@ -246,27 +258,30 @@ public class Main {
                         Integer post_size = post_text.length();
                         Date post_date = null;
                         // Определим дату
-                        if((string_date.contains("Сегодня") != true) && (string_date.contains("Вчера") != true) ) {
+                        if(!string_date.contains("Сегодня") && !string_date.contains("Вчера"))  {
                             Calendar post_Calendar = stringToDateFormat(string_date);
                             post_date = post_Calendar.getTime();
                         } else {
                             //если дата содержит слово "Сегодня" то присвоим ей сегодняшнюю дату
-                            if (string_date.contains("Сегодня") == true){
+                            if (string_date.contains("Сегодня")){
                                 post_date = today_date;
                                 //если дата содержит слово "Вчера" то присвоим ей вчерашнюю дату
                             } else {
-                                if (string_date.contains("Вчера") == true){
+                                if (string_date.contains("Вчера")){
                                     post_date = etoday_date;
                                 } else {
                                     post_date = today_date;
                                 }
                             }
                         }
-
-                        if (begin_date.before(post_date) && end_date.after(post_date)) {    // сравним пост по дате - вообще попадать ли ему сюда!
-                            if (post_size > settings.GAME_POST_SIZE && (podforum_name.compareTo(settings.need_forum1) == 0 ||  podforum_name.compareTo(settings.need_forum2) == 0 ||  podforum_name.compareTo(settings.need_forum3) == 0 ||  podforum_name.compareTo(settings.need_forum4) == 0 || podforum_name.compareTo(settings.need_forum5) == 0 || podforum_name.compareTo(settings.need_forum6) == 0 )) {
-                                number_of_game_post = number_of_game_post + 1;   //условный размер игрового поста
+                        // сравним пост по дате - вообще попадать ли ему сюда!
+                        if (begin_date.before(post_date) && end_date.after(post_date)) {
+                            //сравним по размеру поста и по форуму - игровой ли это пост
+                            if ((post_size > settings.GAME_POST_SIZE) && Arrays.asList(settings.need_forums_array).contains(podforum_name)) {
+                                //увеличим число игровых постов на 1
+                                number_of_game_post = number_of_game_post + 1;
                             }
+                            //записываем полученные о посте данные в массив постов
                             postList.add(new Post(playerList.get(j).getName(), post_size, string_date, number_of_game_post, podforum_name));  // имя автора можем достать из шапки поста - но зачем оно тут нам?
                         }
                     }
@@ -291,13 +306,11 @@ public class Main {
             out.write("============================================================"+ System.getProperty("line.separator"));
 
             JOptionPane.showMessageDialog( null, "Скрипт закончил работу. Проверьте файл с результатами...", "Конец", JOptionPane.DEFAULT_OPTION );
-
             out.close();
 
         } catch (IOException e) {
             System.err.println("Ошибка: Нет файла конфигурации...");
         }
-
     }
 
     public static Calendar stringToDateFormat(String stringDate){
@@ -311,7 +324,6 @@ public class Main {
         Calendar need_calendar = new GregorianCalendar(Date_year, Date_month-1, Date_day);
         return need_calendar;
     }
-
 }
 
 class Post {

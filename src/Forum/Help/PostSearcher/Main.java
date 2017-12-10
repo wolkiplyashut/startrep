@@ -26,7 +26,6 @@ class Settings {
     Integer PAGE_SEARCH_SIZE;
     String USER_NAME;
     String PASSWORD;
-    Integer ArrayForumSize;
     String[] need_forums_array;
     String[] parts;
 
@@ -48,9 +47,8 @@ class Settings {
         PASSWORD = property.getProperty("PASSWORD");
         //соберем массив из наименований форумов
         parts = property.getProperty("need_forums_array").split(";");
-        Integer ArrayForumSize = parts.length;
-        need_forums_array = new String[ArrayForumSize];
-        for (int i = 0; i < ArrayForumSize; ++i)
+        need_forums_array = new String[parts.length];
+        for (int i = 0; i < parts.length; ++i)
         {
             need_forums_array[i] = String.valueOf(parts[i]);
         }

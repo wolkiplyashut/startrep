@@ -29,13 +29,6 @@ class Settings {
     Integer ArrayForumSize;
     String[] need_forums_array;
     String[] parts;
-    //String need_forum1;
-    //String need_forum2;
-    //String need_forum3;
-    //String need_forum4;
-    //String need_forum5;
-    //String need_forum6;
-
 
     Settings(String filename) throws IOException {
 
@@ -61,14 +54,6 @@ class Settings {
         {
             need_forums_array[i] = String.valueOf(parts[i]);
         }
-
-        //need_forum1 = property.getProperty("need_forum1");
-        //need_forum2 = property.getProperty("need_forum2");
-        //need_forum3 = property.getProperty("need_forum3");
-        //need_forum4 = property.getProperty("need_forum4");
-        //need_forum5 = property.getProperty("need_forum5");
-        //need_forum6 = property.getProperty("need_forum6");
-
     }
 }
 public class Main {
@@ -225,10 +210,10 @@ public class Main {
                 String main_need_url = author_url.replaceFirst("profile", "search");
                 main_need_url = main_need_url.replaceFirst("id=", "action=show_user_posts&user_id="); // http://testunicorn.0pk.ru/search.php?action=show_user_posts&user_id=2&p=2
                 // усложним адрес до числа страниц
-                int rolvo = playerList.get(j).getKolvoSoobsh();
-                System.out.println ("Количество постов y " + playerList.get(j).getName() + " = " + rolvo);
-                // количество листов с постами. TODO лагает количество постов! уточнить! потому что люди удаляют свои посты и счетчик ROLVO не точный...
-                int number_of_post_sheets = (( rolvo - (rolvo % settings.PAGE_SEARCH_SIZE) )/settings.PAGE_SEARCH_SIZE ) + 1;
+                int playersNumberOfMessages = playerList.get(j).getKolvoSoobsh();
+                System.out.println ("Количество постов y " + playerList.get(j).getName() + " = " + playersNumberOfMessages);
+                // количество листов с постами. TODO лагает количество постов! уточнить! потому что люди удаляют свои посты и счетчик playersNumberOfMessages не точный...
+                int number_of_post_sheets = (( playersNumberOfMessages - (playersNumberOfMessages % settings.PAGE_SEARCH_SIZE) )/settings.PAGE_SEARCH_SIZE ) + 1;
                 System.out.println ("Количество листов постов y " + playerList.get(j).getName() + " = " + number_of_post_sheets);
                 // TODO добавить ограничение по датам - чтобы не ходил по ВСЕМ страницам, ибо если дата уже достигнута - дальше постов не будет.
                 for (number_of_lists = 1; number_of_lists <= number_of_post_sheets; number_of_lists++) {

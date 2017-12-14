@@ -110,10 +110,10 @@ public class Main {
                     //получим ссылку на его профиль
                     String url = h2Element.child(0).attr("href");
                     //получим количество сообщений пользователя
-                    String kolvo_soobsh_string = h2Element.parent().parent().child(3).text();
-                    Integer all_post_number = Integer.parseInt(kolvo_soobsh_string);
+                    //String kolvo_soobsh_string = h2Element.parent().parent().child(3).text();
+                    //Integer all_post_number = Integer.parseInt(kolvo_soobsh_string);
                     //добавим эти данные в массив
-                    playerList.add(new Player(url, name, all_post_number));
+                    playerList.add(new Player(url, name, 0));
                 });
             }
 
@@ -161,11 +161,36 @@ public class Main {
         // мы имеем не совсем тот адрес на руках. преобразуем. http://yaoi.9bb.ru/profile.php?id=2106 в - http://yaoi.9bb.ru/search.php?action=show_user_posts&user_id=2106
         String main_need_url = author_url.replaceFirst("profile", "search");
         main_need_url = main_need_url.replaceFirst("id=", "action=show_user_posts&user_id="); // http://testunicorn.0pk.ru/search.php?action=show_user_posts&user_id=2&p=2
-        // усложним адрес до числа страниц
-        int playersNumberOfMessages = player.getKolvoSoobsh();
-        System.out.println ("Количество постов y " + player.getName() + " = " + playersNumberOfMessages);
-        // количество листов с постами. TODO лагает количество постов! уточнить! потому что люди удаляют свои посты и счетчик playersNumberOfMessages не точный...
-        int number_of_post_sheets = (( playersNumberOfMessages - (playersNumberOfMessages % settings.PAGE_SEARCH_SIZE) )/settings.PAGE_SEARCH_SIZE ) + 1;
+        //найдем число листов с постами
+        String url_first_player_page = main_need_url + "&p=1";
+        Connection.Response res1 = Jsoup.connect(url_first_player_page)
+                .userAgent(USER_AGENT)
+                .cookies(cookies)
+                .method(Method.GET)
+                .execute();
+
+        Document doc5 = Jsoup.parse(res1.body());
+        int number_of_post_sheets = 1;
+        Element pageLinkElement = doc5.select("div.linkst").first();
+        Elements numberOfPageElements = pageLinkElement.select("a[href]");
+        if(numberOfPageElements.size() > 0){
+            int[] mas_of_string_pages = new int[numberOfPageElements.size()];
+            int i = 0;
+            for(Element numberOfLastPageElement : numberOfPageElements ){
+                if (!(numberOfLastPageElement.text().equals("«")) && !(numberOfLastPageElement.text().equals("»"))){
+                mas_of_string_pages[i] = Integer.parseInt(numberOfLastPageElement.text());
+                }
+                if (i < numberOfPageElements.size()-1){
+                 i++;
+                }
+            }
+            int maxString = mas_of_string_pages[0];
+            for(i = 0; i < mas_of_string_pages.length; i++) {
+                if(mas_of_string_pages[i] > maxString)
+                    maxString = mas_of_string_pages[i];
+            }
+            number_of_post_sheets = maxString;
+        }
         System.out.println ("Количество листов постов y " + player.getName() + " = " + number_of_post_sheets);
         // TODO добавить ограничение по датам - чтобы не ходил по ВСЕМ страницам, ибо если дата уже достигнута - дальше постов не будет.
         for (int number_of_lists = 1; number_of_lists <= number_of_post_sheets; number_of_lists++) {
@@ -188,20 +213,20 @@ public class Main {
                 //получим адрес поста
                 String post_url = postElement.child(0).child(0).child(3).attr("href");
                 //получим строку с датой поста
-                String string_date = postElement.child(0).child(0).child(3).text();
+                String string_post_date = postElement.child(0).child(0).child(3).text();
                 //получим текст поста
                 String post_text = postElement.child(1).child(1).text();
                 //получим количество символов в посте
                 Integer post_size = post_text.length();
                 Date post_date = null;
                 // Определим дату
-                if (string_date.contains("Сегодня")){
+                if (string_post_date.contains("Сегодня")){
                     post_date = settings.today_date;
                 } else
-                if (string_date.contains("Вчера")){
+                if (string_post_date.contains("Вчера")){
                     post_date = settings.etoday_date;
                 } else {
-                    Calendar post_Calendar = Settings.stringToDateFormat(string_date);
+                    Calendar post_Calendar = Settings.stringToDateFormat(string_post_date);
                     post_date = post_Calendar.getTime();
                 }
 
@@ -214,7 +239,7 @@ public class Main {
                         number_of_game_post = number_of_game_post + 1;
                     }
                     //записываем полученные о посте данные в массив постов
-                    Forum.Help.PostSearcher.Post post = new Forum.Help.PostSearcher.Post(player.getName(), post_size, string_date, number_of_game_post, podforum_name);
+                    Forum.Help.PostSearcher.Post post = new Forum.Help.PostSearcher.Post(player.getName(), post_size, string_post_date, number_of_game_post, podforum_name);
                     postList.add(post);  // имя автора можем достать из шапки поста - но зачем оно тут нам?
                 }
             }

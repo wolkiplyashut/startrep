@@ -172,24 +172,26 @@ public class Main {
         Document doc5 = Jsoup.parse(res1.body());
         int number_of_post_sheets = 1;
         Element pageLinkElement = doc5.select("div.linkst").first();
-        Elements numberOfPageElements = pageLinkElement.select("a[href]");
-        if(numberOfPageElements.size() > 0){
-            int[] mas_of_string_pages = new int[numberOfPageElements.size()];
-            int i = 0;
-            for(Element numberOfLastPageElement : numberOfPageElements ){
-                if (!(numberOfLastPageElement.text().equals("«")) && !(numberOfLastPageElement.text().equals("»"))){
-                mas_of_string_pages[i] = Integer.parseInt(numberOfLastPageElement.text());
+        if(pageLinkElement != null) {
+            Elements numberOfPageElements = pageLinkElement.select("a[href]");
+            if (numberOfPageElements.size() > 0) {
+                int[] mas_of_string_pages = new int[numberOfPageElements.size()];
+                int i = 0;
+                for (Element numberOfLastPageElement : numberOfPageElements) {
+                    if (!(numberOfLastPageElement.text().equals("«")) && !(numberOfLastPageElement.text().equals("»"))) {
+                        mas_of_string_pages[i] = Integer.parseInt(numberOfLastPageElement.text());
+                    }
+                    if (i < numberOfPageElements.size() - 1) {
+                        i++;
+                    }
                 }
-                if (i < numberOfPageElements.size()-1){
-                 i++;
+                int maxString = mas_of_string_pages[0];
+                for (i = 0; i < mas_of_string_pages.length; i++) {
+                    if (mas_of_string_pages[i] > maxString)
+                        maxString = mas_of_string_pages[i];
                 }
+                number_of_post_sheets = maxString;
             }
-            int maxString = mas_of_string_pages[0];
-            for(i = 0; i < mas_of_string_pages.length; i++) {
-                if(mas_of_string_pages[i] > maxString)
-                    maxString = mas_of_string_pages[i];
-            }
-            number_of_post_sheets = maxString;
         }
         System.out.println ("Количество листов постов y " + player.getName() + " = " + number_of_post_sheets);
         // TODO добавить ограничение по датам - чтобы не ходил по ВСЕМ страницам, ибо если дата уже достигнута - дальше постов не будет.
@@ -206,41 +208,42 @@ public class Main {
 
             //находим все посты на странице
             Elements postElements = doc4.select("div.post");
-            //для каждого поста находим данные
-            for (Element postElement : postElements) {
-                //получим имя подфорума
-                String podforum_name = postElement.child(0).child(0).child(1).text();
-                //получим адрес поста
-                String post_url = postElement.child(0).child(0).child(3).attr("href");
-                //получим строку с датой поста
-                String string_post_date = postElement.child(0).child(0).child(3).text();
-                //получим текст поста
-                String post_text = postElement.child(1).child(1).text();
-                //получим количество символов в посте
-                Integer post_size = post_text.length();
-                Date post_date = null;
-                // Определим дату
-                if (string_post_date.contains("Сегодня")){
-                    post_date = settings.today_date;
-                } else
-                if (string_post_date.contains("Вчера")){
-                    post_date = settings.etoday_date;
-                } else {
-                    Calendar post_Calendar = Settings.stringToDateFormat(string_post_date);
-                    post_date = post_Calendar.getTime();
-                }
-
-
-                // сравним пост по дате - вообще попадать ли ему сюда!
-                if (settings.begin_date.before(post_date) && post_date.before(settings.end_date)) {
-                    //сравним по размеру поста и по форуму - игровой ли это пост
-                    if ((post_size > settings.GAME_POST_SIZE) && Arrays.asList(settings.need_forums_array).contains(podforum_name)) {
-                        //увеличим число игровых постов на 1
-                        number_of_game_post = number_of_game_post + 1;
+            if (postElements.size() > 0) {
+                //для каждого поста находим данные
+                for (Element postElement : postElements) {
+                    //получим имя подфорума
+                    String podforum_name = postElement.child(0).child(0).child(1).text();
+                    //получим адрес поста
+                    String post_url = postElement.child(0).child(0).child(3).attr("href");
+                    //получим строку с датой поста
+                    String string_post_date = postElement.child(0).child(0).child(3).text();
+                    //получим текст поста
+                    String post_text = postElement.child(1).child(1).text();
+                    //получим количество символов в посте
+                    Integer post_size = post_text.length();
+                    Date post_date = null;
+                    // Определим дату
+                    if (string_post_date.contains("Сегодня")) {
+                        post_date = settings.today_date;
+                    } else if (string_post_date.contains("Вчера")) {
+                        post_date = settings.etoday_date;
+                    } else {
+                        Calendar post_Calendar = Settings.stringToDateFormat(string_post_date);
+                        post_date = post_Calendar.getTime();
                     }
-                    //записываем полученные о посте данные в массив постов
-                    Forum.Help.PostSearcher.Post post = new Forum.Help.PostSearcher.Post(player.getName(), post_size, string_post_date, number_of_game_post, podforum_name);
-                    postList.add(post);  // имя автора можем достать из шапки поста - но зачем оно тут нам?
+
+
+                    // сравним пост по дате - вообще попадать ли ему сюда!
+                    if (settings.begin_date.before(post_date) && post_date.before(settings.end_date)) {
+                        //сравним по размеру поста и по форуму - игровой ли это пост
+                        if ((post_size > settings.GAME_POST_SIZE) && Arrays.asList(settings.need_forums_array).contains(podforum_name)) {
+                            //увеличим число игровых постов на 1
+                            number_of_game_post = number_of_game_post + 1;
+                        }
+                        //записываем полученные о посте данные в массив постов
+                        Forum.Help.PostSearcher.Post post = new Forum.Help.PostSearcher.Post(player.getName(), post_size, string_post_date, number_of_game_post, podforum_name);
+                        postList.add(post);  // имя автора можем достать из шапки поста - но зачем оно тут нам?
+                    }
                 }
             }
         }
